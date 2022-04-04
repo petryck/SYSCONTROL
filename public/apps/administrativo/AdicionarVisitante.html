@@ -1,0 +1,65 @@
+<div class="app AddVisitante" id="AdicionarVisitante" style="width: 600px !important; height: 469px !important;">
+    <div class="header_app">
+        <div class="configMenu">
+          <p>Lançamento de Visitante</p>
+        </div>
+          <div class="header-profile">
+        </div>
+  </div>
+
+    <div class="ControleVisitante">
+        <div class="row" style="margin-top: 20px; margin-left: 10px; height: 100%;">
+            <div class="col-8">
+                <div class="CampoRegistro">
+                    <input class="CampoAdicionar" placeholder="Nome completo" type="text">
+                </div>
+                <div class="CampoRegistro" style="margin-top: 10px;">
+                    <input class="CampoAdicionar" placeholder="CPF/CNPJ" type="text">
+                </div>
+                <div class="DadosAcompanhante">
+                    <select class="form-select SelecionarAcompanhante" aria-label="Default select example">
+                        <option selected>Acompanhante</option>
+                        <option value="1">Mateus Ribeiro</option>
+                        <option value="2">Petryck William</option>
+                      </select>
+                </div>
+                <div class="DadosAcompanhante">
+                    <select class="form-select SelecionarAcompanhante" aria-label="Default select example">
+                        <option selected>Função</option>
+                        <option value="1">TI</option>
+                        <option value="2">Marketing</option>
+                      </select>
+                </div>
+                <div class="CampoRegistro">
+                    <input class="CampoAdicionar" placeholder="Data" type="datetime-local">
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img src="http://chronus-dc.ddns.net:8070/chronus/assets/img/colaboradores/39.jpeg?version=2022-03-31%2004:52:09" width="133px" alt="Imagem colaborador" style="border-radius: 5px; margin-left: 20px;">
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="CampoRegistro">
+                        <textarea rows="5" class="MotivoVisita" placeholder="Motivo da visita" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 126px;">
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-danger CancelarRegistro" data-idjanela="AdicionarVisitante" style="width: 100%;">Cancelar</button>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-success AprovarRegistro" style="width: 100%;">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

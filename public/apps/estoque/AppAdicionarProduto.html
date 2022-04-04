@@ -1,0 +1,268 @@
+<div class="app AddVisitante" id="AppAdicionarProduto" style="width: 750px !important; height: 600px !important;">
+    <div class="header_app">
+        <div class="configMenu">
+          <p>Adicionar Produto</p>
+        </div>
+          <div class="header-profile">
+        </div>
+  </div>
+
+    <div class="AdicionarProduto">
+        <div class="row" style="margin-top: 20px; margin-left: 10px; height: 100%;">
+            <div class="col-8">
+                <div class="CampoRegistro">
+                    <p class="contentLegend">Nome do produto</p>
+                    <input class="CampoAdicionar" placeholder="Camisa Good, Camisa Gato" type="text">
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img src="https://minhatshirt.fbitsstatic.net/img/p/god-is-good-verde-71438/261149.jpg?w=800&h=800&v=202203281132&qs=ignore" width="133px" alt="Imagem colaborador" style="border-radius: 5px; margin-left: 20px;">
+            </div>
+            <div class="col-3" style="margin-top: -66px;">
+                <div class="DadosAcompanhante">
+                    <p class="contentLegend">Categoria</p>
+                    <select class="form-select SelecionarAcompanhante"  aria-label="Default select example">
+                        <option value="1">Estampa</option>
+                        <option value="2">Relevo</option>
+                      </select>
+                </div>
+            </div>
+
+
+            <div class="row" style="margin-top: 41px;">
+                <div class="col-1" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Qtd</p>
+                        <input class="CampoAdicionar" id="quantidade_produto" style="height: 33px;" type="number">
+                    </div>
+                </div>
+
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="DadosAcompanhante">
+                        <p class="contentLegend">Cor</p>
+                        <select class="form-select SelecionarAcompanhante" id="cor_produto" aria-label="Default select example">
+                            <option value="Amarelo">Amarelo</option>
+                            <option value="Azul">Azul</option>
+                            <option value="Vermelho">Vermelho</option>
+                          </select>
+                    </div>
+                </div>
+
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="DadosAcompanhante">
+                        <p class="contentLegend">Tamanho</p>
+                        <select class="form-select SelecionarAcompanhante" id="tamanho_produto" aria-label="Default select example">
+                            <option value="P">P</option>
+                            <option value="M">M</option>
+                            <option value="G">G</option>
+                            <option value="GG">GG</option>
+                          </select>
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Custo</p>
+                        <input class="CampoAdicionar" id="valor_custo" style="height: 33px;" type="number">
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">% Lucro</p>
+                        <input class="CampoAdicionar" id="porcentagem_custo" style="height: 33px;" value="100" type="number">
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Valor</p>
+                        <input class="CampoAdicionar" disabled id="total_custo" style="height: 33px;" type="text">
+                    </div>
+                </div>
+                <div class="col-1" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                       <button class="btn btn-primary" id="btn_add_color_produto" style="width: 100%;height: 32px;margin-top: 21px;"><svg style="margin-top: -10px;margin-left: -3px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-plus" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"></path>
+                        <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"></path>
+                      </svg></button>
+                    </div>
+                </div>
+              
+            
+  
+    <table id="tabela_cores_tamanhos_add" class="tabela_interno table table-dark" style="height:42px;max-height: 142px;overflow: auto;">
+      <thead>
+        <tr>
+          <th scope="col">Cor</th>
+          <th scope="col">Tamanho</th>
+          <th scope="col">Quantidade</th>
+          <th scope="col">Custo</th>
+          <th scope="col">% Lucro</th>
+          <th scope="col">Valor</th>
+          <th scope="col">#</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr>
+          <th scope="row">Azul</th>
+          <td>Médio</td>
+          <td>05</td>
+          <td>R$ 14.00</td>
+          <td>100%</td>
+          <td>R$ 24.00</td>
+          <td><button style="width: 20px;height: 20px;" class="btn btn-danger">
+            <svg style="width: 12px;margin-top: -22px;margin-left: -7px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+                <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"></path>
+              </svg>
+          </button></td>
+        </tr> -->
+    
+ 
+      </tbody>
+    </table>
+
+
+               
+               
+               
+                
+                
+            </div>
+
+            <div class="row" >
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-danger CancelarRegistro" data-idjanela="AppAdicionarProduto" style="width: 100%;">Cancelar</button>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-success AprovarRegistro" style="width: 100%;">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+lista_produtos_color = [];
+$(document).on('change', '#valor_custo', function(e){
+    calcular_valor()
+})
+$(document).on('change', '#porcentagem_custo', function(e){
+    calcular_valor()
+})
+
+
+$(document).on('click', '#btn_add_color_produto', function(e){
+
+
+    valor_custo = $('#valor_custo').val(); 
+    porcentagem_custo = $('#porcentagem_custo').val(); 
+    valor_total = $('#total_custo').val(); 
+    qtd = $('#quantidade_produto').val(); 
+    cor = $('#cor_produto').val(); 
+    tamanho = $('#tamanho_produto').val(); 
+
+
+
+    e.preventDefault()
+    
+    produtos = {
+        qtd:qtd,
+        cor:cor,
+        tamanho:tamanho,
+        custo:valor_custo,
+        lucro:porcentagem_custo+'%',
+        valor_total:valor_total
+    }
+ 
+    lista_produtos_color.push(produtos)
+
+    console.log(lista_produtos_color)
+
+
+    lista_produtos_adds()
+})
+
+
+
+function lista_produtos_adds(){
+    cont_id = 0;
+    $('#tabela_cores_tamanhos_add tbody').html('')
+
+    lista_produtos_color.forEach(element => {
+
+  valor_custo = element.custo
+  valor_custo2 = valor_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
+  valor_total = element.valor_total
+  valor_total2 = valor_total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
+ 
+
+  console.log(valor_total)
+
+
+
+linha = `<tr>
+     <th scope="row">`+element.cor+`</th>
+     <td>`+element.tamanho+`</td>
+     <td>`+element.qtd+`</td>
+     <td>`+valor_custo2+`</td>
+     <td>`+element.lucro+`</td>
+     <td>`+valor_total2+`</td>
+     <td><button id="`+cont_id+`" style="width: 20px;height: 20px;" class="btn btn-danger btn_delete_tamanhos">
+       <svg style="width: 12px;margin-top: -22px;margin-left: -7px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+           <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"></path>
+         </svg>
+     </button></td>
+   </tr>`;
+
+   $('#tabela_cores_tamanhos_add tbody').append(linha)
+   
+
+   cont_id++;
+});
+
+
+
+}
+
+
+
+
+$(document).on('click', '.btn_delete_tamanhos', function(e){
+    e.preventDefault()
+    id_produto = $(this).attr('id');
+
+    // delete lista_produtos_color[id_produto]
+    lista_produtos_color.splice(id_produto, 1);
+
+    lista_produtos_adds()
+
+})
+
+
+
+function calcular_valor(){
+
+    valor_custo = $('#valor_custo').val(); 
+    porcentagem_custo = $('#porcentagem_custo').val(); 
+
+    total_custo = parseFloat(((valor_custo / 100) * porcentagem_custo))+parseFloat(valor_custo);
+
+    
+    // var f = total_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+    var b = total_custo.toLocaleString('pt-BR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 3
+})
+    $('#total_custo').val(b)
+
+
+
+}
+
+
+</script>
