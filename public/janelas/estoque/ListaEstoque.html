@@ -1,20 +1,17 @@
 
   <div class="table-responsive" style="height: 85%;">
-    <table id="tabela_visitantes" class="table table-hover table-dark" >
+    <table id="tabela_estoque" class="table table-hover table-dark" >
       <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Nome</th>
-          <th scope="col">Estoque</th>
+          <th scope="col">Modelo</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Tamanho</th>
+          <th scope="col">Cor</th>
+          <th scope="col">Quantidade</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>GOD IS GOOD</td>
-          <td>05</td>
-        </tr>
- 
       </tbody>
     </table>
   </div>
@@ -22,7 +19,25 @@
   <script>
 
 
-$('#tabela_visitantes').DataTable({
+var tabela_estoque = $('#tabela_estoque').DataTable({
+      "paging":   true,
+      "ordering": true,
+      "info":     false,
+      "lengthChange": false,
+      "rowId": "id",
+      "columns": [
+          {"data": "id"},
+          {"data": "nome"},
+          {"data": "categoria"},
+          {"data": "tamanho"},
+          {"data": "cor"},
+          {"data": "quantidade"}
+       ],
+       "order": [[ 0, "desc" ]],
+      "ajax": {
+          "url": "/QueryListaEstoque",
+          "type": "POST",
+      },
   "language": {
             "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
         }

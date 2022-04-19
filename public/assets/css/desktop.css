@@ -1029,6 +1029,10 @@ input[type=range] {
     width:400px;
 } */
 
+#tabela_estoque_filter{
+    display: none;
+}
+
 
 
 
