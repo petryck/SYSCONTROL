@@ -5,6 +5,8 @@ const app = express()
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
+// import compress from 'compression'
+import bodyParser from 'body-parser'
 
 
 import { dirname } from 'path'
@@ -20,8 +22,12 @@ const server = http.Server(app);
 
 const io = geckos()
 
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
+
 app.use('/', express.static(path.join(__dirname, '../public')))
+// app.use(express.compress());
 
 
 var connection = mysql.createConnection({
