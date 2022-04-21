@@ -29,7 +29,7 @@ req.onprogress = function(evt)
 
         if(progress == '100'){
 
-          carregamento()
+          // carregamento()
          
         }
         
@@ -40,7 +40,7 @@ req.onreadystatechange = function (aEvt) {
 
     if (req.readyState == 4 && req.status == 200) 
     {  
-
+      carregamento()
     }  
 };  
 req.send(); 
