@@ -12,9 +12,15 @@ var infos = {
 var req = new XMLHttpRequest();   
 req.onprogress = function(evt) 
 {
-  console.log(evt)
+  var contentLength;
+  if (e.lengthComputable) {
+    contentLength = e.total;
+  } else {
+    contentLength = parseInt(e.target.getResponseHeader('x-decompressed-content-length'), 10);
+  }
+  console.log(contentLength)
    
-        var progress = (evt.loaded / evt.total) * 100; 
+        var progress = (evt.loaded / contentLength) * 100; 
       
 
         if(progress == '100'){
@@ -27,7 +33,7 @@ req.onprogress = function(evt)
 };
 req.open('GET', '/assets/js/bootstrap/bootstrap.bundle.js', true);  
 req.onreadystatechange = function (aEvt) {  
-  console.log(aEvt)
+
     if (req.readyState == 4 && req.status == 200) 
     {  
 
