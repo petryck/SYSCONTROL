@@ -25,8 +25,9 @@ req.onprogress = function(evt)
         
    
 };
-req.open('GET', '/', true);  
+req.open('GET', '/loading', true);  
 req.onreadystatechange = function (aEvt) {  
+  console.log(aEvt)
     if (req.readyState == 4 && req.status == 200) 
     {  
 
