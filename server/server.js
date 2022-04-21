@@ -106,7 +106,7 @@ io.onConnection(channel => {
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'))
+    res.sendFile(path.join(__dirname, '../public/index.html'),{req,getdbinfo})
   })
 
 app.get('/login', (req, res) => {
