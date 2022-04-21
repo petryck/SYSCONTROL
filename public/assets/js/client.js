@@ -12,13 +12,17 @@ var infos = {
 var req = new XMLHttpRequest();   
 req.onprogress = function(evt) 
 {
+  console.log(evt.lengthComputable)
   var contentLength;
   if (evt.lengthComputable) {
     contentLength = evt.total;
   } else {
     contentLength = parseInt(evt.target.getResponseHeader('x-decompressed-content-length'), 10);
   }
-  console.log(contentLength)
+
+
+  console.log(evt.target)
+
    
         var progress = (evt.loaded / contentLength) * 100; 
       
