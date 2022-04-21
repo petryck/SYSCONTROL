@@ -25,7 +25,7 @@ req.onprogress = function(evt)
         
    
 };
-req.open('GET', '/loading', true);  
+req.open('GET', '/assets/js/bootstrap/bootstrap.bundle.js', true);  
 req.onreadystatechange = function (aEvt) {  
   console.log(aEvt)
     if (req.readyState == 4 && req.status == 200) 
