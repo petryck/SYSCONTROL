@@ -113,12 +113,12 @@ io.onConnection(channel => {
 
 app.get('/', (req, res) => {
 
-    res.sendFile(path.join(__dirname, '../public/index.html'))
+    res.sendFile(path.join(__dirname, '../public/home.html'))
   })
 
   app.get('/loading', (req, res) => {
 
-    res.sendFile(path.join(__dirname, '../public/index.html'))
+    res.sendFile(path.join(__dirname, '../public/home.html'))
   })
 
 app.get('/login', (req, res) => {
