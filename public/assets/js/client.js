@@ -13,10 +13,10 @@ var req = new XMLHttpRequest();
 req.onprogress = function(evt) 
 {
   var contentLength;
-  if (e.lengthComputable) {
-    contentLength = e.total;
+  if (evt.lengthComputable) {
+    contentLength = evt.total;
   } else {
-    contentLength = parseInt(e.target.getResponseHeader('x-decompressed-content-length'), 10);
+    contentLength = parseInt(evt.target.getResponseHeader('x-decompressed-content-length'), 10);
   }
   console.log(contentLength)
    
