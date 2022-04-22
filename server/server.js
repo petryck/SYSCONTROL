@@ -1,4 +1,3 @@
-import geckos from '@geckos.io/server'
 import mysql from 'mysql'
 import express from 'express'
 const app = express()
@@ -7,6 +6,9 @@ import cors from 'cors'
 import http from 'http'
 // import compress from 'compression'
 import bodyParser from 'body-parser'
+import formidable from 'formidable'
+import fs from 'fs'
+
 
 
 import { dirname } from 'path'
@@ -20,7 +22,6 @@ const port = 3265
 
 const server = http.Server(app);
 
-const io = geckos()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -35,7 +36,7 @@ var connection = mysql.createConnection({
   user: "aplicacao",
   port: "3306",
   password: "conline@2510A",
-  database: "SIRIUS",
+  database: "ANALUA",
   charset: "utf8mb4"
 });
 
@@ -54,61 +55,6 @@ connection.connect(function(err) {
 
 // connection.incia_conexao();
 
-
-server.lastPlayderID = 0;
-var players = [];
-
-io.addServer(server)
-
-io.onConnection(channel => {
-    
-  channel.on('ready', data => {
-
-    channel.player = {
-      id: data.id,
-      nome: data.nome,
-      token:data.token
-  }; 
-
-
-
-  
-  })
-
-    
-
-    channel.on('SendMessege', data => {
-
-      var saida_player = {
-        id: channel.player.id,
-        msg: data,
-        name: channel.player.name
-    };
-    console.log(saida_player)
-
-    channel.broadcast.emit('SendMessege',saida_player);
-    })
-
-
-    
-
-    channel.onDisconnect(() => {
-      // console.log(channel)
-   
-      console.log(channel.player.id+' removido')
-
-   
-      io.emit('remove',channel.player.id);
-    
-
-     players = players.filter((item) => item.id !== channel.player.id);
-  
-      
-    })
-
-      channel.emit('ready') 
-
-})
 
 
 app.get('/', (req, res) => {
@@ -136,28 +82,244 @@ app.get('/app_janela', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/janelas/'+req.query.pagina+'.html'))
 })
 
+
+app.post('/login_query', (req, res) => {
+  var login = req.body.email;
+  console.log(login)
+
+
+  var sql = `SELECT * FROM usuarios WHERE login = '${login}' LIMIT 1`;
+  connection.query(sql, function(err2, results){
+    console.log(err2)
+
+    if(results.length > 0){
+      res.json(results);
+    }else{
+      res.json('error');
+    }
+
+})
+})
+
+
+app.post('/login_senha', (req, res) => {
+  var email = req.body.email;
+  var senha = req.body.senha;
+
+  var sql = `SELECT * FROM usuarios WHERE login = '${email}' AND senha = '${senha}' LIMIT 1`;
+  connection.query(sql, function(err2, results){
+
+    if(results.length > 0){
+      res.json(results);
+    }else{
+      res.json('error');
+    }
+
+  })
+
+})
+
+app.post('/cad_produto', (req, res) => {
+
+let form = new formidable.IncomingForm();
+
+//Process the file upload in Node
+form.parse(req, function (error, fields, file) {
+
+
+  if(fields.id_produto != null && fields.id_produto != ''){
+    // JA TEM UM PRODUTO CADASTRADO COM O ID RECEBIDO
+    
+    
+    if(JSON.parse(fields.sub_produto)){
+ 
+    
+    
+      JSON.parse(fields.sub_produto).forEach(element => {
+        
+      var sql = `INSERT INTO ANALUA.estoque
+                  (quantidade, cor, tamanho, custo,valor_venda, modelo) 
+                  VALUES 
+                  (${element.qtd}, ${element.cor}, ${element.tamanho}, '${element.custo}', '${element.valor_total}', ${fields.id_produto});`;
+      connection.query(sql, function(err2, results){
+       
+      })
+    
+      });
+     
+    
+    
+    }
+
+    res.json('sucesso');
+    }else{
+    // NÃO TEM UM PRODUTO CADASTRADO COM O ID RECEBIDO
+
+   
+    
+  var sql = `INSERT INTO ANALUA.modelo
+            (nome, categoria) 
+            VALUES 
+            ('${fields.nome_produto}', ${fields.categoria})`;
+
+            connection.query(sql, function(err2, results){
+             
+              var id_novo_cadastro =  results.insertId;
+
+              if(results){
+
+                let filepath = file.img.filepath;
+                let newpath = path.join(__dirname, '../public/assets/image/produtos/');
+                let regex = /[^.]*/;
+                newpath += file.img.originalFilename.replace(regex, results.insertId);
+              //Copy the uploaded file to a custom folder
+              fs.rename(filepath, newpath, function () {
+
+                var caminho_img = 'assets/image/produtos/'+file.img.originalFilename.replace(regex, results.insertId);
+
+                var sql = `UPDATE ANALUA.modelo SET img = '${caminho_img}' WHERE (id_modelo = ${results.insertId})`;
+                connection.query(sql)
+                
+              });
+
+
+
+              if(JSON.parse(fields.sub_produto)){
+    
+    
+                JSON.parse(fields.sub_produto).forEach(element => {
+                  
+                var sql = `INSERT INTO ANALUA.estoque
+                            (quantidade, cor, tamanho, custo,valor_venda, modelo) 
+                            VALUES 
+                            (${element.qtd}, ${element.cor}, ${element.tamanho}, '${element.custo}', '${element.valor_total}', ${id_novo_cadastro});`;
+                connection.query(sql, function(err2, results){
+                  
+                  if(results){
+                   
+                  }
+                })
+              
+                });
+               
+              
+              
+              }
+
+              
+
+              }else{
+
+                // res.json('error');
+              }
+              
+              
+            })
+
+ 
+
+            
+
+
+            res.json('sucesso');
+    }
+});
+
+
+
+
+
+
+
+})
+
+app.post('/lista_modelos', (req, res) => {
+  
+  var sql = `SELECT 
+  ANALUA.modelo.id_modelo as idModelo,
+  ANALUA.modelo.nome as NomeModelo,
+  ANALUA.modelo.img as imgModelo,
+  ANALUA.categorias.nome as NomeCategoria,
+  ANALUA.categorias.id_categoria as idCategoria
+FROM ANALUA.modelo
+JOIN ANALUA.categorias ON ANALUA.categorias.id_categoria = ANALUA.modelo.categoria`;
+  connection.query(sql, function(err2, results){
+    res.json(results);
+  })
+})
+
+
+app.post('/lista_categorias', (req, res) => {
+  
+  var sql = `SELECT * FROM ANALUA.categorias`;
+  connection.query(sql, function(err2, results){
+    res.json(results);
+  })
+})
+
+app.post('/lista_cores', (req, res) => {
+  
+  var sql = `SELECT * FROM ANALUA.cores`;
+  connection.query(sql, function(err2, results){
+    res.json(results);
+  })
+
+})
+
+app.post('/lista_tamanhos', (req, res) => {
+  
+  var sql = `SELECT * FROM ANALUA.tamanho`;
+  connection.query(sql, function(err2, results){
+    res.json(results);
+  })
+})
+
+
+
+
+
+
+app.post('/consulta_modelo', (req, res) => {
+  var id_modelo = req.body.id_visitante;
+  
+  var sql = `SELECT 
+  ANALUA.modelo.id_modelo as idModelo,
+  ANALUA.modelo.nome as NomeModelo,
+  ANALUA.modelo.img as imgModelo,
+  ANALUA.categorias.nome as NomeCategoria,
+  ANALUA.categorias.id_categoria as idCategoria
+FROM ANALUA.modelo
+JOIN ANALUA.categorias ON ANALUA.categorias.id_categoria = ANALUA.modelo.categoria WHERE ANALUA.modelo.id_modelo = ${id_modelo}`;
+  connection.query(sql, function(err2, results){
+    res.json(results);
+  })
+})
+
+
 app.post('/QueryListaEstoque', function (req, res) {
   
   var arrayLiteral2 = [];
 
   var sql = `SELECT ANALUA.estoque.idEstoque as IdEstoque,
-            ANALUA.categorias.nome as NomeCategoria,
-            ANALUA.modelo.nome as NomeModelo,
-            ANALUA.estoque.modelo as IdModelo,
-            ANALUA.tamanho.nome as NomeTamanho,
-            ANALUA.tamanho.idTamanho as IdTamanho,
-            ANALUA.cores.nome as NomeCor,
-            ANALUA.cores.idCores as IdCor,
-            (SELECT SUM(ANALUA.estoque.quantidade) FROM ANALUA.estoque 
-            WHERE ANALUA.estoque.cor = IdCor
-            AND ANALUA.estoque.tamanho = IdTamanho
-            AND ANALUA.estoque.modelo = IdModelo) as Quantidade
-            FROM ANALUA.estoque
-        INNER JOIN ANALUA.modelo ON ANALUA.modelo.id_modelo = ANALUA.estoque.modelo
-        INNER JOIN ANALUA.categorias ON ANALUA.modelo.categoria = ANALUA.categorias.id_categoria
-        INNER JOIN ANALUA.tamanho ON ANALUA.tamanho.idTamanho = ANALUA.estoque.tamanho
-        INNER JOIN ANALUA.cores ON ANALUA.cores.idCores = ANALUA.estoque.cor
-        GROUP BY IdTamanho,IdCor,IdModelo
+  ANALUA.categorias.nome as NomeCategoria,
+  ANALUA.modelo.nome as NomeModelo,
+  ANALUA.modelo.img as imgModelo,
+  ANALUA.estoque.modelo as IdModelo,
+  ANALUA.tamanho.nome as NomeTamanho,
+  ANALUA.estoque.valor_venda as ValorVenda,
+  ANALUA.tamanho.idTamanho as IdTamanho,
+  ANALUA.cores.nome as NomeCor,
+  ANALUA.cores.idCores as IdCor,
+  (SELECT SUM(ANALUA.estoque.quantidade) FROM ANALUA.estoque 
+  WHERE ANALUA.estoque.cor = IdCor
+  AND ANALUA.estoque.tamanho = IdTamanho
+  AND ANALUA.estoque.modelo = IdModelo) as Quantidade
+  FROM ANALUA.estoque
+INNER JOIN ANALUA.modelo ON ANALUA.modelo.id_modelo = ANALUA.estoque.modelo
+INNER JOIN ANALUA.categorias ON ANALUA.modelo.categoria = ANALUA.categorias.id_categoria
+INNER JOIN ANALUA.tamanho ON ANALUA.tamanho.idTamanho = ANALUA.estoque.tamanho
+INNER JOIN ANALUA.cores ON ANALUA.cores.idCores = ANALUA.estoque.cor
+GROUP BY IdTamanho,IdCor,IdModelo
 
 `;
 
@@ -168,11 +330,14 @@ app.post('/QueryListaEstoque', function (req, res) {
 
       var objeto = {
         id: e.IdEstoque,
-        nome: e.NomeModelo,
+        img:'<span style="display:none;">'+e.IdEstoque+'</span><img src="'+e.imgModelo+'" style="width: 45px;border-radius: 17%;">',
+        codigo:e.IdEstoque+'-'+e.IdTamanho+'-'+e.IdCor,
+        nome: '<span style="display:none;">'+e.IdModelo+'</span>'+e.NomeModelo,
         categoria: e.NomeCategoria,
         tamanho: e.NomeTamanho,
         cor: e.NomeCor,
-        quantidade: e.Quantidade
+        quantidade: e.Quantidade,
+        ValorVenda: 'R$ '+e.ValorVenda
         
     }
   
@@ -191,6 +356,12 @@ app.post('/QueryListaEstoque', function (req, res) {
 
       })
 })
+
+function padLeft(nr, n, str){
+  return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+
+
 app.post('/QueryPessoasVisitantes', function (req, res) {
 
   var arrayLiteral2 = [];

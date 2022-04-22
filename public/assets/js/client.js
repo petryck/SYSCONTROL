@@ -3,16 +3,23 @@ var channel;
 var user_info;
 top.index = 1;
 
-var infos = {
-  id:1,
-  nome:'Petryck',
-  token: 'dsadsadsa'
+// var infos = {
+//   id:1,
+//   nome:'Petryck',
+//   token: 'dsadsadsa'
+// }
+
+if(!localStorage.getItem("info_usuario_syscontrol_os")){
+  window.location.href = "/login";
+}else{
+  info_users = JSON.parse(localStorage.getItem("info_usuario_syscontrol_os"));
+  
 }
 
 var req = new XMLHttpRequest();   
 req.onprogress = function(evt) 
 {
-  console.log(evt.lengthComputable)
+
   var contentLength;
   if (evt.lengthComputable) {
     contentLength = evt.total;
@@ -21,7 +28,7 @@ req.onprogress = function(evt)
   }
 
 
-  console.log(evt.target)
+
 
    
         var progress = (evt.loaded / contentLength) * 100; 
@@ -64,9 +71,9 @@ if(conta_carregamento != 100){
   
 }
 
-localStorage.setItem( 'info_usuario', JSON.stringify(infos) );
+// localStorage.setItem( 'info_usuario_syscontrol_os', JSON.stringify(infos) );
 
-const info_users = JSON.parse(localStorage.getItem("info_usuario"));
+// const info_users = JSON.parse(localStorage.getItem("info_usuario_syscontrol_os"));
 
 if(localStorage.getItem('theme')){
 
@@ -101,7 +108,7 @@ if(localStorage.getItem('color_theme')){
   color_theme = localStorage.getItem('color_theme');
   localStorage.setItem('color_theme', color_theme)
   $('body').addClass(color_theme)
-  console.log($('#'+color_theme))
+
 
   var certo = '<svg class="certo" width="1.2em" height="1.2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41L9 16.17z"></path></svg>'
   
@@ -228,7 +235,7 @@ document.querySelector('.button_opt_dark').addEventListener('click',function(e){
 //----------------------
 
 
-user_info = JSON.parse(localStorage.getItem("info_usuario"));
+user_info = JSON.parse(localStorage.getItem("info_usuario_syscontrol_os"));
 
 
 
@@ -369,7 +376,7 @@ document.querySelector('body').addEventListener('click',function(e){
   button_header = e.target;
   var fora = !header.contains(e.target);
 
-  console.log(fora)
+
 
   if(fora){
    
@@ -456,7 +463,7 @@ function atualizar_cotacao_moedas(){
       if(pag.length == 0){
           $('.cotacao_moedas').append('<div>VALORES </div><div>NÃO</div><div>ATUALIZADOS</div>')  
       }else{
-          console.log(pag.length)
+ 
        
           $('.cotacao_moedas').css('--row-span', pag.length);
       }
@@ -616,7 +623,7 @@ $(document).on('mouseover', '.container .svelte-ds4wcb', function(e){
 $('.svelte-ds4wcb button').css('transform', 'scale(1.2)')
 
 $('.svelte-ds4wcb svg').css('opacity', '1')
-console.log('passou')
+
 
 })
 
@@ -625,7 +632,7 @@ $(document).on('mouseout', '.container .svelte-ds4wcb', function(e){
   $('.svelte-ds4wcb button').css('transform', 'scale(1)')
 
 $('.svelte-ds4wcb svg').css('opacity', '0')
-console.log('saiu')
+
   
 })
 
@@ -695,6 +702,266 @@ $(document).keyup(function(e) {
 }); 
 
 
+
+$(document).on('click', '.btn_cadastra_produto', function() {
+
+  if($('.AdicionarProduto #seleciona_visitante').val() != null && $('.AdicionarProduto #seleciona_visitante').val() != ''){
+
+    var id_produto = $('.AdicionarProduto #id_modelo').val()
+    var nome_produto = $('.AdicionarProduto #seleciona_visitante').val()
+    var categoria = $('.AdicionarProduto select[name=categorias]').val()
+    var img = $("#fila_img").get(0).files[0];
+    // var img_modelo = $('.AdicionarProduto #img_modelo').val()
+    var formData = new FormData();
+
+
+console.log(lista_produtos_color)
+    formData.append('id_produto',id_produto);
+    formData.append('nome_produto',nome_produto);
+    formData.append('categoria',categoria);
+    formData.append('sub_produto',JSON.stringify(lista_produtos_color));
+    formData.append('img',img);
+    
+
+
+    $.ajax({
+      url: '/cad_produto',
+      type: 'POST',
+      data: formData,
+      dataType:'JSON',
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        console.log(response)
+        if(response == 'sucesso'){
+
+          // $('#AdicionarVisitante').remove();
+          tabela_estoque.ajax.reload();
+          lista_produtos_color = [];
+          setTimeout(() => {
+            lista_produtos_adds()
+          }, 2000);
+
+        }
+
+        
+          
+    
+      },
+      error: function() {
+          console.log('fail');
+      }
+  });
+  
+  // var body = {
+  //   id_produto:id_produto,
+  //   nome_produt:nome_produto,
+  //   categoria:categoria,
+  //   sub_produto:sub_produto
+  // }
+
+
+
+  //   $.ajax({
+  //     type: 'POST',
+  //     url: '/cad_produto',
+  //     data: body,
+  //     success: function (data) {
+  //       console.log(data)
+
+  //       if(data == 'sucesso'){
+
+  //         // $('#AdicionarVisitante').remove();
+  //         tabela_estoque.ajax.reload();
+  //         lista_produtos_color = [];
+  //         lista_produtos_adds()
+
+  //       }
+      
+  //     }
+  
+  //   })
+
+  }
+
+}); 
+
+lista_produtos_color = [];
+$(document).on('change', '#valor_custo', function(e){
+    calcular_valor()
+})
+$(document).on('change', '#porcentagem_custo', function(e){
+    calcular_valor()
+})
+
+
+
+
+
+
+$(document).on('click', '.btn_delete_tamanhos', function(e){
+    e.preventDefault()
+    id_produto = $(this).attr('id');
+
+    // delete lista_produtos_color[id_produto]
+    lista_produtos_color.splice(id_produto, 1);
+
+    lista_produtos_adds()
+
+})
+
+
+
+function calcular_valor(){
+
+    valor_custo = $('#valor_custo').val(); 
+    porcentagem_custo = $('#porcentagem_custo').val(); 
+
+    total_custo = parseFloat(((valor_custo / 100) * porcentagem_custo))+parseFloat(valor_custo);
+
+    
+    // var f = total_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+    var b = total_custo.toLocaleString('pt-BR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 3
+})
+    $('#total_custo').val(b)
+
+
+
+}
+
+$(document).on('click', '#btn_add_color_produto', function(e){
+
+  e.preventDefault()
+  valor_custo = $('#valor_custo').val(); 
+  porcentagem_custo = $('#porcentagem_custo').val(); 
+  valor_total = $('#total_custo').val(); 
+  qtd = $('#quantidade_produto').val(); 
+  cor = $('#cor_produto').val(); 
+  tamanho = $('#tamanho_produto').val(); 
+
+
+
+  if(valor_total != '' && valor_custo != ''){
+    produtos = {
+      qtd:qtd,
+      cor:cor,
+      tamanho:tamanho,
+      custo:valor_custo,
+      lucro:porcentagem_custo+'%',
+      valor_total:valor_total
+  }
+
+  lista_produtos_color.push(produtos)
+
+
+
+
+  lista_produtos_adds()
+
+$('#valor_custo').val(''); 
+$('#porcentagem_custo').val(100); 
+$('#total_custo').val(''); 
+$('#quantidade_produto').val(1);
+  }
+  
+
+})
+
+
+
+function lista_produtos_adds(){
+  
+
+
+  cont_id = 0;
+  $('#tabela_cores_tamanhos_add tbody').html('')
+
+  lista_produtos_color.forEach(element => {
+
+    valor_custo = element.custo
+    valor_custo2 = valor_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
+    valor_total = element.valor_total
+    valor_total2 = valor_total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
+    
+    
+    
+    
+    linha = `<tr>
+       <th scope="row">`+element.cor+`</th>
+       <td>`+element.tamanho+`</td>
+       <td>`+element.qtd+`</td>
+       <td>`+valor_custo2+`</td>
+       <td>`+element.lucro+`</td>
+       <td>`+valor_total2+`</td>
+       <td><button id="`+cont_id+`" style="width: 20px;height: 20px;" class="btn btn-danger btn_delete_tamanhos">
+         <svg style="width: 12px;margin-top: -22px;margin-left: -7px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+             <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"></path>
+           </svg>
+       </button></td>
+     </tr>`;
+    
+     $('#tabela_cores_tamanhos_add tbody').append(linha)
+     
+    
+     cont_id++;
+    });
+
+
+
+
+
+}
+
+
+$(document).on('click', '#img_modelo', function() {
+  $('#fila_img').click()
+});
+
+
+$(document).on('input', '#seleciona_visitante', function() {
+
+  
+  var opt = $('#lista_visitantes').find('option[value="'+$(this).val()+'"]');
+  var id_visitante = opt.length ? opt.attr('id') : null;
+
+  if(id_visitante != null){
+
+
+    $.ajax({
+      type: 'POST',
+      data: {id_visitante:id_visitante},
+      url: '/consulta_modelo',
+      success: function (data) {
+
+      
+
+        $('#id_modelo').val(id_visitante)
+        
+        $('#img_modelo').attr('src', data[0]['imgModelo'])
+        $("select[name=categorias]").prop( "disabled", true );
+  
+       
+        $('select[name=categorias] option[value='+data[0]['idCategoria']+']').attr('selected','selected');
+        // $('#documento').prop( "readonly", true );
+
+
+      }
+  
+    })
+  }else{
+    $('#id_modelo').val(null)
+    $('#img_modelo').attr('src', 'assets/image/logo_sirius.png')
+    $("select[name=categorias]").prop( "disabled", false );
+    // $('#documento').prop( "readonly", false );
+  }
+
+
+
+});
+
+
 window.addEventListener('keydown', function (e) {
   var code = e.which || e.keyCode;
   if (code == 112) e.preventDefault();
@@ -752,4 +1019,19 @@ $(document).on('click', '.btn_menu', function(e){
   
   
   });
+
+
+  function previewFile(input){
+    var file = $("#fila_img").get(0).files[0];
+
+    if(file){
+        var reader = new FileReader();
+
+        reader.onload = function(){
+            $("#img_modelo").attr("src", reader.result);
+        }
+
+        reader.readAsDataURL(file);
+    }
+}
   

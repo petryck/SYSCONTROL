@@ -1,14 +1,16 @@
 
   <div class="table-responsive" style="height: 85%;">
-    <table id="tabela_estoque" class="table table-hover table-dark" >
+    <table id="tabela_estoque" class="table table-hover table-dark" style="width: 100%;">
       <thead>
         <tr>
           <th scope="col">#</th>
+          <th scope="col">Código</th>
           <th scope="col">Modelo</th>
           <th scope="col">Categoria</th>
           <th scope="col">Tamanho</th>
           <th scope="col">Cor</th>
           <th scope="col">Quantidade</th>
+          <th scope="col">Valor</th>
         </tr>
       </thead>
       <tbody>
@@ -26,14 +28,17 @@ var tabela_estoque = $('#tabela_estoque').DataTable({
       "lengthChange": false,
       "rowId": "id",
       "columns": [
-          {"data": "id"},
+          {"data": "img"},
+          {"data": "codigo"},
           {"data": "nome"},
           {"data": "categoria"},
           {"data": "tamanho"},
           {"data": "cor"},
-          {"data": "quantidade"}
+          {"data": "quantidade"},
+          {"data": "ValorVenda"}
+          
        ],
-       "order": [[ 0, "desc" ]],
+       "order": [[ 0, "desc" ],[ 2, "desc" ]],
       "ajax": {
           "url": "/QueryListaEstoque",
           "type": "POST",

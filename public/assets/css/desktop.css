@@ -914,12 +914,12 @@ input[type=range] {
     align-items: center;  
 }
 .loading img{
-    width: 194px;
+    width: 100px;
 }
 
 .loading .barra_carregamento{
     position: absolute;
-    margin-top: 10%;
+    margin-top: 117px;
     width: 190px;
     background: #7a7676;
     height: 7px;

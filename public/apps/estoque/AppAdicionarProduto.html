@@ -1,30 +1,37 @@
 <div class="app AddVisitante" id="AppAdicionarProduto" style="width: 750px !important; height: 600px !important;">
     <div class="header_app">
         <div class="configMenu">
-          <p>Adicionar Produto</p>
+          <p>Cadastrar Produto</p>
         </div>
           <div class="header-profile">
         </div>
   </div>
 
     <div class="AdicionarProduto">
+        <form id="form_cadProdutos" action="" method="post">
         <div class="row" style="margin-top: 20px; margin-left: 10px; height: 100%;">
             <div class="col-8">
                 <div class="CampoRegistro">
                     <p class="contentLegend">Nome do produto</p>
-                    <input class="CampoAdicionar" placeholder="Camisa Good, Camisa Gato" type="text">
+                    <input type="text" id="id_modelo" value="null" style="display: none;">
+                    <input class="CampoAdicionar" id="seleciona_visitante" list="lista_visitantes" autocomplete="off" name="nome" type="text">
+                    <datalist id="lista_visitantes">
+                     
+                      </datalist> 
                 </div>
-            </div>
+             </div>
+          
 
             <div class="col-4">
-                <img src="https://minhatshirt.fbitsstatic.net/img/p/god-is-good-verde-71438/261149.jpg?w=800&h=800&v=202203281132&qs=ignore" width="133px" alt="Imagem colaborador" style="border-radius: 5px; margin-left: 20px;">
+                <input type="file" name="" id="fila_img" style="display: none;" onchange="previewFile(this);">
+
+                <img id="img_modelo" src="assets/image/logo_sirius.png" width="133px" alt="Imagem colaborador" style="border-radius: 5px; margin-left: 20px;background-color: bisque;">
             </div>
             <div class="col-3" style="margin-top: -66px;">
                 <div class="DadosAcompanhante">
                     <p class="contentLegend">Categoria</p>
-                    <select class="form-select SelecionarAcompanhante"  aria-label="Default select example">
-                        <option value="1">Estampa</option>
-                        <option value="2">Relevo</option>
+                    <select class="form-select SelecionarAcompanhante" name="categorias" aria-label="Default select example">
+                     
                       </select>
                 </div>
             </div>
@@ -34,7 +41,7 @@
                 <div class="col-1" style="padding-right: 0;">
                     <div class="CampoRegistro">
                         <p class="contentLegend">Qtd</p>
-                        <input class="CampoAdicionar" id="quantidade_produto" style="height: 33px;" type="number">
+                        <input class="CampoAdicionar" id="quantidade_produto" value="1" min="1" style="height: 33px;" type="number">
                     </div>
                 </div>
 
@@ -42,9 +49,7 @@
                     <div class="DadosAcompanhante">
                         <p class="contentLegend">Cor</p>
                         <select class="form-select SelecionarAcompanhante" id="cor_produto" aria-label="Default select example">
-                            <option value="Amarelo">Amarelo</option>
-                            <option value="Azul">Azul</option>
-                            <option value="Vermelho">Vermelho</option>
+                       
                           </select>
                     </div>
                 </div>
@@ -86,9 +91,11 @@
                       </svg></button>
                     </div>
                 </div>
-              
+            </div>    
+        </div>   
+    </form>
+     
             
-  
     <table id="tabela_cores_tamanhos_add" class="tabela_interno table table-dark" style="height:42px;max-height: 142px;overflow: auto;">
       <thead>
         <tr>
@@ -128,7 +135,7 @@
                 
             </div>
 
-            <div class="row" >
+            <div class="row" style="width: 97%;margin-left: 10px;">
                 <div class="col-6">
                     <div class="BtnConfirmation">
                         <button type="button" class="btn btn-danger CancelarRegistro" data-idjanela="AppAdicionarProduto" style="width: 100%;">Cancelar</button>
@@ -137,7 +144,7 @@
 
                 <div class="col-6">
                     <div class="BtnConfirmation">
-                        <button type="button" class="btn btn-success AprovarRegistro" style="width: 100%;">Salvar</button>
+                        <button type="button" class="btn btn-success AprovarRegistro btn_cadastra_produto" style="width: 100%;">Cadastrar</button>
                     </div>
                 </div>
             </div>
@@ -148,121 +155,73 @@
 
 <script>
 lista_produtos_color = [];
-$(document).on('change', '#valor_custo', function(e){
-    calcular_valor()
+$.ajax({
+      type: 'POST',
+      url: '/lista_modelos',
+      success: function (data) {
+     
+        $("#lista_visitantes").html('')
+        data.forEach(element => {
+
+            $("#lista_visitantes").append('<option id="'+element.idModelo+'" value="'+element.idModelo+' - '+element.NomeModelo+'">'+element.NomeCategoria+'</option>')
+            
+        });
+
+      }
+  
 })
-$(document).on('change', '#porcentagem_custo', function(e){
-    calcular_valor()
-})
 
 
-$(document).on('click', '#btn_add_color_produto', function(e){
+$.ajax({
+      type: 'POST',
+      url: '/lista_categorias',
+      success: function (data) {
+  
 
+        $("select[name=categorias]").html('')
+        data.forEach(element => {
+            $("select[name=categorias]").append('<option value="'+element.id_categoria+'" >'+element.nome+'</option>')
+            
+        });
 
-    valor_custo = $('#valor_custo').val(); 
-    porcentagem_custo = $('#porcentagem_custo').val(); 
-    valor_total = $('#total_custo').val(); 
-    qtd = $('#quantidade_produto').val(); 
-    cor = $('#cor_produto').val(); 
-    tamanho = $('#tamanho_produto').val(); 
+      }
+  
+    })
 
+    $.ajax({
+      type: 'POST',
+      url: '/lista_cores',
+      success: function (data) {
+       
 
+        $("#cor_produto").html('')
 
-    e.preventDefault()
+        data.forEach(element => {
+            $("#cor_produto").append('<option value="'+element.idCores+'" >'+element.nome+'</option>')
+            
+        });
+
+      }
+  
+    })
+
+    $.ajax({
+      type: 'POST',
+      url: '/lista_tamanhos',
+      success: function (data) {
+          console.log(data)
+
+        $("#tamanho_produto").html('')
+
+        data.forEach(element => {
+            $("#tamanho_produto").append('<option value="'+element.idTamanho+'" >'+element.nome+'</option>')
+            
+        });
+
+      }
+  
+    })
     
-    produtos = {
-        qtd:qtd,
-        cor:cor,
-        tamanho:tamanho,
-        custo:valor_custo,
-        lucro:porcentagem_custo+'%',
-        valor_total:valor_total
-    }
- 
-    lista_produtos_color.push(produtos)
-
-    console.log(lista_produtos_color)
-
-
-    lista_produtos_adds()
-})
-
-
-
-function lista_produtos_adds(){
-    cont_id = 0;
-    $('#tabela_cores_tamanhos_add tbody').html('')
-
-    lista_produtos_color.forEach(element => {
-
-  valor_custo = element.custo
-  valor_custo2 = valor_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
-  valor_total = element.valor_total
-  valor_total2 = valor_total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
- 
-
-  console.log(valor_total)
-
-
-
-linha = `<tr>
-     <th scope="row">`+element.cor+`</th>
-     <td>`+element.tamanho+`</td>
-     <td>`+element.qtd+`</td>
-     <td>`+valor_custo2+`</td>
-     <td>`+element.lucro+`</td>
-     <td>`+valor_total2+`</td>
-     <td><button id="`+cont_id+`" style="width: 20px;height: 20px;" class="btn btn-danger btn_delete_tamanhos">
-       <svg style="width: 12px;margin-top: -22px;margin-left: -7px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
-           <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"></path>
-         </svg>
-     </button></td>
-   </tr>`;
-
-   $('#tabela_cores_tamanhos_add tbody').append(linha)
-   
-
-   cont_id++;
-});
-
-
-
-}
-
-
-
-
-$(document).on('click', '.btn_delete_tamanhos', function(e){
-    e.preventDefault()
-    id_produto = $(this).attr('id');
-
-    // delete lista_produtos_color[id_produto]
-    lista_produtos_color.splice(id_produto, 1);
-
-    lista_produtos_adds()
-
-})
-
-
-
-function calcular_valor(){
-
-    valor_custo = $('#valor_custo').val(); 
-    porcentagem_custo = $('#porcentagem_custo').val(); 
-
-    total_custo = parseFloat(((valor_custo / 100) * porcentagem_custo))+parseFloat(valor_custo);
-
-    
-    // var f = total_custo.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-    var b = total_custo.toLocaleString('pt-BR', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 3
-})
-    $('#total_custo').val(b)
-
-
-
-}
 
 
 </script>
