@@ -160,10 +160,10 @@ $.ajax({
       url: '/lista_modelos',
       success: function (data) {
      
-        $("#lista_visitantes").html('')
+        $("#AppAdicionarProduto #lista_visitantes").html('')
         data.forEach(element => {
 
-            $("#lista_visitantes").append('<option id="'+element.idModelo+'" value="'+element.idModelo+' - '+element.NomeModelo+'">'+element.NomeCategoria+'</option>')
+            $("#AppAdicionarProduto #lista_visitantes").append('<option id="'+element.idModelo+'" value="'+element.idModelo+' - '+element.NomeModelo+'">'+element.NomeCategoria+'</option>')
             
         });
 
@@ -178,9 +178,9 @@ $.ajax({
       success: function (data) {
   
 
-        $("select[name=categorias]").html('')
+        $("#AppAdicionarProduto select[name=categorias]").html('')
         data.forEach(element => {
-            $("select[name=categorias]").append('<option value="'+element.id_categoria+'" >'+element.nome+'</option>')
+            $("#AppAdicionarProduto select[name=categorias]").append('<option value="'+element.id_categoria+'" >'+element.nome+'</option>')
             
         });
 
@@ -194,10 +194,10 @@ $.ajax({
       success: function (data) {
        
 
-        $("#cor_produto").html('')
+        $("#AppAdicionarProduto #cor_produto").html('')
 
         data.forEach(element => {
-            $("#cor_produto").append('<option value="'+element.idCores+'" >'+element.nome+'</option>')
+            $("#AppAdicionarProduto #cor_produto").append('<option value="'+element.idCores+'" >'+element.nome+'</option>')
             
         });
 
@@ -211,10 +211,10 @@ $.ajax({
       success: function (data) {
           console.log(data)
 
-        $("#tamanho_produto").html('')
+        $("#AppAdicionarProduto #tamanho_produto").html('')
 
         data.forEach(element => {
-            $("#tamanho_produto").append('<option value="'+element.idTamanho+'" >'+element.nome+'</option>')
+            $("#AppAdicionarProduto #tamanho_produto").append('<option value="'+element.idTamanho+'" >'+element.nome+'</option>')
             
         });
 

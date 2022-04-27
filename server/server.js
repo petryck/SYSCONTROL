@@ -10,7 +10,7 @@ import formidable from 'formidable'
 import fs from 'fs'
 
 
-
+import ejs from 'ejs';
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -28,6 +28,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
 app.use('/', express.static(path.join(__dirname, '../public')))
+
+
+
+app.engine('html', ejs.renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname);
+
 // app.use(express.compress());
 
 
@@ -73,8 +80,10 @@ app.get('/login', (req, res) => {
 
 
 app.get('/app', (req, res) => {
+
+  console.log(req.query.variavel)
   
-  res.sendFile(path.join(__dirname, '../public/apps/'+req.query.pagina+'.html'))
+  res.render(path.join(__dirname, '../public/apps/'+req.query.pagina+'.html'), {id_variavel:req.query.variavel})
 })
 
 app.get('/app_janela', (req, res) => {
@@ -100,6 +109,31 @@ app.post('/login_query', (req, res) => {
 
 })
 })
+
+app.post('/QueryUmProduto', (req, res) => {
+  var id = req.body.id;
+
+  var sql = `SELECT ANALUA.estoque.*,
+                    ANALUA.modelo.nome as NomeModelo,
+                    ANALUA.modelo.categoria as IdCategoria,
+                    ANALUA.modelo.img as ImgModelo
+                     FROM ANALUA.estoque 
+  JOIN ANALUA.modelo ON ANALUA.modelo.id_modelo = ANALUA.estoque.modelo 
+  WHERE ANALUA.estoque.idEstoque = '${id}'`;
+
+  connection.query(sql, function(err2, results){
+    console.log(err2)
+
+    if(results.length > 0){
+      res.json(results);
+    }else{
+      res.json('error');
+    }
+
+})
+})
+
+
 
 
 app.post('/login_senha', (req, res) => {
@@ -167,20 +201,26 @@ form.parse(req, function (error, fields, file) {
               var id_novo_cadastro =  results.insertId;
 
               if(results){
+        
 
-                let filepath = file.img.filepath;
-                let newpath = path.join(__dirname, '../public/assets/image/produtos/');
-                let regex = /[^.]*/;
-                newpath += file.img.originalFilename.replace(regex, results.insertId);
-              //Copy the uploaded file to a custom folder
-              fs.rename(filepath, newpath, function () {
+                if(file.img != undefined){
 
-                var caminho_img = 'assets/image/produtos/'+file.img.originalFilename.replace(regex, results.insertId);
+                  let filepath = file.img.filepath;
+                  let newpath = path.join(__dirname, '../public/assets/image/produtos/');
+                  let regex = /[^.]*/;
+                  newpath += file.img.originalFilename.replace(regex, results.insertId);
+                //Copy the uploaded file to a custom folder
+                fs.rename(filepath, newpath, function () {
+  
+                  var caminho_img = 'assets/image/produtos/'+file.img.originalFilename.replace(regex, results.insertId);
+  
+                  var sql = `UPDATE ANALUA.modelo SET img = '${caminho_img}' WHERE (id_modelo = ${results.insertId})`;
+                  connection.query(sql)
+                  
+                });
+                }
 
-                var sql = `UPDATE ANALUA.modelo SET img = '${caminho_img}' WHERE (id_modelo = ${results.insertId})`;
-                connection.query(sql)
                 
-              });
 
 
 
@@ -328,9 +368,15 @@ GROUP BY IdTamanho,IdCor,IdModelo
               
     results.forEach(e => {
 
+      if(!e.imgModelo){
+        var img = 'assets/image/produtos/noimage.gif';
+      }else{
+        var img = e.imgModelo;
+      }
+
       var objeto = {
         id: e.IdEstoque,
-        img:'<span style="display:none;">'+e.IdEstoque+'</span><img src="'+e.imgModelo+'" style="width: 45px;border-radius: 17%;">',
+        img:'<span style="display:none;">'+e.IdEstoque+'</span><img src="'+img+'" style="width: 45px;border-radius: 17%;">',
         codigo:e.IdEstoque+'-'+e.IdTamanho+'-'+e.IdCor,
         nome: '<span style="display:none;">'+e.IdModelo+'</span>'+e.NomeModelo,
         categoria: e.NomeCategoria,

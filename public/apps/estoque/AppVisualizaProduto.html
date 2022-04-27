@@ -1,0 +1,208 @@
+<div class="app AddVisitante" id="AppVisualizaProduto" style="width: 750px !important; height: 370px !important;">
+    <div class="header_app">
+        <div class="configMenu">
+          <p>Alterar Produto</p>
+        </div>
+          <div class="header-profile">
+        </div>
+  </div>
+
+    <div class="AdicionarProduto">
+        <form id="form_cadProdutos" action="" method="post">
+        <div class="row" style="margin-top: 20px; margin-left: 10px; height: 100%;">
+            <div class="col-8">
+                <div class="CampoRegistro">
+                    <p class="contentLegend" style="display: flex;">Nome do modelo <span style="font-size: 10px;">&nbsp; (deve ser alterado na aba "Modelos")</span></p>
+                    <input type="text" id="id_modelo" value="null" style="display: none;">
+                    <input class="CampoAdicionar" readonly id="seleciona_visitante" list="lista_visitantes" autocomplete="off" name="nome" type="text">
+                  
+                </div>
+             </div>
+          
+
+            <div class="col-4">
+          
+
+                <img id="img_modelo_vz" src="assets/image/logo_sirius.png" width="133px" alt="Imagem colaborador" style="border-radius: 5px; margin-left: 20px;background-color: bisque;">
+            </div>
+            <div class="col-3" style="margin-top: -66px;">
+                <div class="DadosAcompanhante">
+                    <p class="contentLegend">Categoria</p>
+                    <select disabled class="form-select SelecionarAcompanhante" name="categorias" aria-label="Default select example">
+                     
+                      </select>
+                </div>
+            </div>
+
+
+            <div class="row" style="margin-top: 41px;">
+                <div class="col-1" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Qtd</p>
+                        <input class="CampoAdicionar" id="quantidade_produto" value="1" min="1" style="height: 33px;" type="number">
+                    </div>
+                </div>
+
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="DadosAcompanhante">
+                        <p class="contentLegend">Cor</p>
+                        <select class="form-select SelecionarAcompanhante" id="cor_produto" aria-label="Default select example">
+                       
+                          </select>
+                    </div>
+                </div>
+
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="DadosAcompanhante">
+                        <p class="contentLegend">Tamanho</p>
+                        <select class="form-select SelecionarAcompanhante" id="tamanho_produto" aria-label="Default select example">
+                        
+                          </select>
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Custo</p>
+                        <input class="CampoAdicionar" id="valor_custo" style="height: 33px;" type="number">
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">% Lucro</p>
+                        <input class="CampoAdicionar" id="porcentagem_custo" style="height: 33px;" value="100" type="number">
+                    </div>
+                </div>
+                <div class="col-2" style="padding-right: 0;">
+                    <div class="CampoRegistro">
+                        <p class="contentLegend">Valor</p>
+                        <input class="CampoAdicionar" disabled id="total_custo" style="height: 33px;" type="text">
+                    </div>
+                </div>
+            </div>    
+        </div>   
+    </form>
+     
+               
+            </div>
+
+            <div class="row" style="width: 97%;margin-left: 10px;position: absolute;bottom: 0;height: 50px;">
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-danger CancelarRegistro" data-idjanela="AppVisualizaProduto" style="width: 100%;">Cancelar</button>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="BtnConfirmation">
+                        <button type="button" class="btn btn-success AprovarRegistro btn_cadastra_produto" style="width: 100%;">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+var id_variavel = '<%= id_variavel %>';
+
+
+
+
+$.ajax({
+      type: 'POST',
+      url: '/lista_categorias',
+      success: function (data) {
+  
+
+        $("select[name=categorias]").html('')
+        data.forEach(element => {
+            $("select[name=categorias]").append('<option value="'+element.id_categoria+'" >'+element.nome+'</option>')
+            
+        });
+
+      }
+  
+    })
+
+
+
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/lista_cores',
+      success: function (data) {
+       
+
+        $("#AppVisualizaProduto #cor_produto").html('')
+
+        data.forEach(element => {
+            $("#AppVisualizaProduto #cor_produto").append('<option value="'+element.idCores+'" >'+element.nome+'</option>')
+            
+        });
+
+      }
+  
+    })
+
+    $.ajax({
+      type: 'POST',
+      url: '/lista_tamanhos',
+      success: function (data) {
+          console.log(data)
+
+        $("#AppVisualizaProduto #tamanho_produto").html('')
+
+        data.forEach(element => {
+            $("#AppVisualizaProduto #tamanho_produto").append('<option value="'+element.idTamanho+'" >'+element.nome+'</option>')
+            
+        });
+
+      }
+  
+    })
+
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/QueryUmProduto',
+      data: {
+        id:id_variavel
+      },
+      success: function (data) {
+     
+     console.log(data)
+
+     $('#AppVisualizaProduto #seleciona_visitante').val(data[0]['NomeModelo'])
+
+        if(data[0]['ImgModelo']){
+            $('#AppVisualizaProduto #img_modelo_vz').attr('src', data[0]['ImgModelo'])
+        }else{
+            $('#AppVisualizaProduto #img_modelo_vz').attr('src', 'assets/image/produtos/noimage.gif')
+        }
+     
+     
+
+        $("#AppVisualizaProduto select[name='categorias'] option[value="+data[0]['IdCategoria']+"]").attr('selected','selected');
+        $("#AppVisualizaProduto #cor_produto option[value="+data[0]['cor']+"]").attr('selected','selected');
+        $("#AppVisualizaProduto #tamanho_produto option[value="+data[0]['tamanho']+"]").attr('selected','selected');
+        $("#AppVisualizaProduto #valor_custo").val(data[0]['custo']);
+
+        $("#AppVisualizaProduto #quantidade_produto").val(data[0]['quantidade']);
+
+        
+    
+
+      }
+  
+})
+    
+    
+
+    
+
+ 
+</script>

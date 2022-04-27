@@ -545,15 +545,20 @@ $(document).on('click', '.menu-circle_close', function(e){
 
 
 
-function janela_system(id, url){
+function janela_system(id, url, varialvel){
 
-
+if(varialvel){
+  var id_variavel = varialvel
+}else{
+  var id_variavel = false;
+}
     
   $.ajax({
       url : "/app",
       type : 'get',
       data: {
-          pagina:url},
+          pagina:url,
+        variavel:id_variavel},
       beforeSend : function(){
            // CARREGANDO REQUISIÇÃO 
       }
@@ -703,6 +708,58 @@ $(document).keyup(function(e) {
 
 
 
+
+
+$(document).on('dblclick', '#tabela_estoque tr', function(e) {
+e.preventDefault()
+var id_produto = $(this).attr('id');
+abrir_janela('AppVisualizaProduto','estoque/AppVisualizaProduto', id_produto)
+
+
+})
+
+
+function abrir_janela(janela_id,url, varialvel){
+
+
+  var id = janela_id
+  var url = url
+
+
+
+  if($('#'+id).length > 0){
+      top.index = top.index+1
+      $('#'+id).css("z-index", index)
+
+      if($(document).find('.app_active').length > 0){
+        $('.app').removeClass('app_active')
+        $('#'+id).addClass('app_active')
+      }else{
+        $('#'+id).addClass('app_active')
+      }
+        
+      
+
+  }else{
+
+    if(varialvel){
+      janela_system(id,url,varialvel)
+    }else{
+      janela_system(id,url)
+    }
+      
+  }
+
+  // document.getElementById('menu_opt').style.visibility = 'hidden';
+
+
+  // janela_system(url)
+  
+ 
+}
+
+
+
 $(document).on('click', '.btn_cadastra_produto', function() {
 
   if($('.AdicionarProduto #seleciona_visitante').val() != null && $('.AdicionarProduto #seleciona_visitante').val() != ''){
@@ -715,7 +772,7 @@ $(document).on('click', '.btn_cadastra_produto', function() {
     var formData = new FormData();
 
 
-console.log(lista_produtos_color)
+
     formData.append('id_produto',id_produto);
     formData.append('nome_produto',nome_produto);
     formData.append('categoria',categoria);
@@ -735,11 +792,12 @@ console.log(lista_produtos_color)
         console.log(response)
         if(response == 'sucesso'){
 
-          // $('#AdicionarVisitante').remove();
-          tabela_estoque.ajax.reload();
+          $('#AppAdicionarProduto').remove();
+          
           lista_produtos_color = [];
           setTimeout(() => {
             lista_produtos_adds()
+            tabela_estoque.ajax.reload();
           }, 2000);
 
         }
@@ -787,10 +845,10 @@ console.log(lista_produtos_color)
 }); 
 
 lista_produtos_color = [];
-$(document).on('change', '#valor_custo', function(e){
+$(document).on('change', '#AppAdicionarProduto  #valor_custo', function(e){
     calcular_valor()
 })
-$(document).on('change', '#porcentagem_custo', function(e){
+$(document).on('change', '#AppAdicionarProduto  #porcentagem_custo', function(e){
     calcular_valor()
 })
 
@@ -814,8 +872,8 @@ $(document).on('click', '.btn_delete_tamanhos', function(e){
 
 function calcular_valor(){
 
-    valor_custo = $('#valor_custo').val(); 
-    porcentagem_custo = $('#porcentagem_custo').val(); 
+    valor_custo = $('#AppAdicionarProduto #valor_custo').val(); 
+    porcentagem_custo = $('#AppAdicionarProduto #porcentagem_custo').val(); 
 
     total_custo = parseFloat(((valor_custo / 100) * porcentagem_custo))+parseFloat(valor_custo);
 
@@ -825,7 +883,7 @@ function calcular_valor(){
   minimumFractionDigits: 2,
   maximumFractionDigits: 3
 })
-    $('#total_custo').val(b)
+    $('#AppAdicionarProduto #total_custo').val(b)
 
 
 
@@ -915,15 +973,15 @@ function lista_produtos_adds(){
 }
 
 
-$(document).on('click', '#img_modelo', function() {
-  $('#fila_img').click()
+$(document).on('click', '#AppAdicionarProduto #img_modelo', function() {
+  $('#AppAdicionarProduto #fila_img').click()
 });
 
 
-$(document).on('input', '#seleciona_visitante', function() {
+$(document).on('input', '#AppAdicionarProduto #seleciona_visitante', function() {
 
   
-  var opt = $('#lista_visitantes').find('option[value="'+$(this).val()+'"]');
+  var opt = $('#AppAdicionarProduto #lista_visitantes').find('option[value="'+$(this).val()+'"]');
   var id_visitante = opt.length ? opt.attr('id') : null;
 
   if(id_visitante != null){
@@ -937,13 +995,22 @@ $(document).on('input', '#seleciona_visitante', function() {
 
       
 
-        $('#id_modelo').val(id_visitante)
+        $('#AppAdicionarProduto #id_modelo').val(id_visitante)
         
-        $('#img_modelo').attr('src', data[0]['imgModelo'])
-        $("select[name=categorias]").prop( "disabled", true );
+
+        if(data[0]['imgModelo']){
+          $('#AppAdicionarProduto #img_modelo').attr('src', data[0]['imgModelo'])
+        }else{
+          $('#AppAdicionarProduto #img_modelo').attr('src', 'assets/image/produtos/noimage.gif')
+          
+        }
+      
+        $('#AppAdicionarProduto #fila_img').prop('disabled', true)
+        
+        $("#AppAdicionarProduto select[name=categorias]").prop( "disabled", true );
   
        
-        $('select[name=categorias] option[value='+data[0]['idCategoria']+']').attr('selected','selected');
+        $('#AppAdicionarProduto select[name=categorias] option[value='+data[0]['idCategoria']+']').attr('selected','selected');
         // $('#documento').prop( "readonly", true );
 
 
@@ -951,9 +1018,10 @@ $(document).on('input', '#seleciona_visitante', function() {
   
     })
   }else{
-    $('#id_modelo').val(null)
-    $('#img_modelo').attr('src', 'assets/image/logo_sirius.png')
-    $("select[name=categorias]").prop( "disabled", false );
+    $('#AppAdicionarProduto #fila_img').prop('disabled', false)
+    $('#AppAdicionarProduto #id_modelo').val(null)
+    $('#AppAdicionarProduto #img_modelo').attr('src', 'assets/image/logo_sirius.png')
+    $("#AppAdicionarProduto select[name=categorias]").prop( "disabled", false );
     // $('#documento').prop( "readonly", false );
   }
 
